@@ -24,21 +24,35 @@ app.get('/', (request, response) => {
   response.send('Hello from my server');
 });
 
-app.get('/hello', (request, response) => {
-  console.log(request.query.name);
-  let firstName = request.query.name;
-  let lastName = request.query.lastName
-  response.send(`Hello ${firstName} ${lastName}!`);
-});
+// app.get('/hello', (request, response) => {
+//   console.log(request.query.name);
+//   let firstName = request.query.name;
+//   let lastName = request.query.lastName;
+//   response.send(`Hello ${firstName} ${lastName}!`);
+// });
 
-app.get('/pets', (request, response, next) => {
+// app.get('/pets', (request, response, next) => {
+//   try {
+//     let speciesFromRequest = request.query.species;
+//     let selectedPet = data.find(pet => pet.species === speciesFromRequest);
+//     let dataToSend = new Pet(selectedPet);
+//     response.send(dataToSend);
+//   } catch (error) {
+//     // if I have an error, it will create a neew instance of the error objct that lives in express.
+//     next(error);
+//   }
+// });
+
+app.get('/weather', (request, response, next) => {
   try {
-    let speciesFromRequest = request.query.species;
-    let selectedPet = data.find(pet => pet.species === speciesFromRequest);
-    let dataToSend = new Pet(selectedPet);
+    let cityFromRequest = request.query.city_name;
+    let selectedCity = data.find(city => city.city_name === cityFromRequest);
+    let dataToSend = new City(selectedCity);
+    console.log(dataToSend);
     response.send(dataToSend);
+
   } catch (error) {
-    // if I have an error, it will create a neew instance of the error objct that lives in express.
+    // if I have an error, it will create a new instance of the error object that lives in express.
     next(error);
   }
 });
@@ -57,10 +71,10 @@ app.use((error, request, response, next) => {
 
 
 // CLASSES
-class Pet {
-  constructor(petObject) {
-    this.name = petObject.name;
-    this.breed = petObject.breed;
+class City {
+  constructor(cityObject) {
+    this.description = cityObject.data;
+    this.date = '05.18.22';
   }
 }
 
