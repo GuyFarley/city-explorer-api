@@ -12,7 +12,10 @@ This creates a back end server that will hold information that we will request/r
 
 ## Architecture
 
-![Web Request-Response Cycle](/Lab07%20WRRC.png)
+![Lab06 Web Request-Response Cycle 1](./img/Lab06%20WRRC.png)
+![Lab06 Web Request-Response Cycle 2](./img/Lab07%20WRRC.png)
+![Lab06 Web Request-Response Cycle 3](./img/Lab08%20WRRC.png)
+![Lab06 Web Request-Response Cycle 4](./img/Lab09%20WRRC.png)
 
 ## Change Log
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example:

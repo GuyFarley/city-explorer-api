@@ -4,7 +4,7 @@ console.log('Our first server');
 // REQUIRE
 
 const express = require('express');
-let data = require('./data/weather.json');
+// let data = require('./data/weather.json');
 const cors = require('cors');
 const axios = require('axios');
 require('dotenv').config();
@@ -21,22 +21,6 @@ app.get('/', (request, response) => {
   response.send('Hello from my server');
 });
 
-// app.get('/weather', (request, response, next) => {
-//   try {
-//     let cityFromRequest = request.query.city_name;
-
-//     let selectedCity = data.find(city => city.city_name.toLowerCase() === cityFromRequest.toLowerCase());
-
-//     let dataToSend = selectedCity.data.map(city => new Forecast(city));
-//     console.log(dataToSend);
-//     response.send(dataToSend);
-
-//   } catch (error) {
-
-//     next(error);
-//   }
-// });
-
 app.get('/weather', async (request, response, next) => {
   try {
     let searchLat = request.query.latitude;
@@ -51,7 +35,30 @@ app.get('/weather', async (request, response, next) => {
     response.send(dataToSend);
 
   } catch (error) {
-    next(error);
+    // next(error);
+    Promise.resolve().then(() => {
+      throw new Error(error.message);
+    }).catch(next);
+  }
+});
+
+app.get('/movies', async (request, response, next) => {
+  try {
+    let movieCity = request.query.movie_city;
+
+    let movieURL = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&language=en-US&include_adult=false&query=${movieCity}`;
+    let moviesFromAPI = await axios.get(movieURL);
+    console.log(moviesFromAPI);
+
+    let movieData = moviesFromAPI.data.results.map(movie => new Movie(movie));
+    console.log(movieData);
+    // response.send(dataToSend);
+
+  } catch (error) {
+    // next(error);
+    Promise.resolve().then(() => {
+      throw new Error(error.message);
+    }).catch(next);
   }
 });
 
@@ -71,6 +78,18 @@ class Forecast {
   constructor(cityObject) {
     this.description = cityObject.weather.description;
     this.date = cityObject.datetime;
+  }
+}
+
+class Movie {
+  constructor(movieObject) {
+    this.title = movieObject.title;
+    this.overview = movieObject.overview;
+    this.vote_average = movieObject.vote_average;
+    this.vote_count = movieObject.vote_count;
+    this.poster_path = `https://www.themoviedb.org/t/p/w440_and_h660_face` + `${movieObject.poster_path}`;
+    this.popularity = movieObject.popularity;
+    this.release_date = movieObject.release_date;
   }
 }
 
