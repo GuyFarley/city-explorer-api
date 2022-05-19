@@ -1,84 +1,60 @@
 'use strict';
-
 console.log('Our first server');
 
-
-// REQUIRE (things we need to build a server)
+// REQUIRE
 
 const express = require('express');
 let data = require('./data/weather.json');
 const cors = require('cors');
 require('dotenv').config();
 
-
-// USE (once we require something we need to use it - this is where we assign variable names to required files)
+// USE
 
 const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 3002;
 
-
-// ROUTES - where we declare our endpoints
+// ROUTES
 
 app.get('/', (request, response) => {
   response.send('Hello from my server');
 });
 
-// app.get('/hello', (request, response) => {
-//   console.log(request.query.name);
-//   let firstName = request.query.name;
-//   let lastName = request.query.lastName;
-//   response.send(`Hello ${firstName} ${lastName}!`);
-// });
-
-// app.get('/pets', (request, response, next) => {
-//   try {
-//     let speciesFromRequest = request.query.species;
-//     let selectedPet = data.find(pet => pet.species === speciesFromRequest);
-//     let dataToSend = new Pet(selectedPet);
-//     response.send(dataToSend);
-//   } catch (error) {
-//     // if I have an error, it will create a neew instance of the error objct that lives in express.
-//     next(error);
-//   }
-// });
-
 app.get('/weather', (request, response, next) => {
   try {
     let cityFromRequest = request.query.city_name;
-    let selectedCity = data.find(city => city.city_name === cityFromRequest);
-    let dataToSend = new City(selectedCity);
+
+    let selectedCity = data.find(city => city.city_name.toLowerCase() === cityFromRequest.toLowerCase());
+
+    let dataToSend = selectedCity.data.map(city => new Forecast(city));
     console.log(dataToSend);
     response.send(dataToSend);
 
   } catch (error) {
-    // if I have an error, it will create a new instance of the error object that lives in express.
+
     next(error);
   }
 });
 
-// catch all "star route"
 app.get('*', (request, response) => {
-  response.send('The thing you are looking for doesn\'t exist');
+  response.status(404).send('The thing you are looking for doesn\'t exist');
 });
-
 
 // ERRORS
 
 app.use((error, request, response, next) => {
+  console.log(error.message);
   response.status(500).send(error.message);
 });
 
-
 // CLASSES
-class City {
+class Forecast {
   constructor(cityObject) {
-    this.description = cityObject.data;
-    this.date = '05.18.22';
+    this.description = cityObject.weather.description;
+    this.date = cityObject.datetime;
   }
 }
 
+// LISTEN
 
-// LISTEN (starts the server)
-// listen is an Express method that takes in 2 arguments: a port value and a callback function
 app.listen(PORT, () => console.log(`listening on port ${PORT}`));
