@@ -87,7 +87,7 @@ class Movie {
     this.overview = movieObject.overview;
     this.vote_average = movieObject.vote_average;
     this.vote_count = movieObject.vote_count;
-    this.poster_path = `https://www.themoviedb.org/t/p/w440_and_h660_face` + `${movieObject.poster_path}`;
+    this.poster_path = movieObject.poster_path ? "https://image.tmdb.org/t/p/w500" + movieObject.poster_path : '';
     this.popularity = movieObject.popularity;
     this.release_date = movieObject.release_date;
   }
