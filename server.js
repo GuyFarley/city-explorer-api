@@ -52,7 +52,7 @@ app.get('/movies', async (request, response, next) => {
 
     let movieData = moviesFromAPI.data.results.map(movie => new Movie(movie));
     console.log(movieData);
-    // response.send(dataToSend);
+    response.send(movieData);
 
   } catch (error) {
     // next(error);
