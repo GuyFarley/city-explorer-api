@@ -1,75 +1,43 @@
 'use strict';
-console.log('Our first server');
+console.log('lab 10 server');
 
-// REQUIRE
-
-const express = require('express');
-// let data = require('./data/weather.json');
-const cors = require('cors');
-// const axios = require('axios');
 require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
 const getWeather = require('./modules/weather');
 const getMovies = require('./modules/movies');
-
-// USE
 
 const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 3002;
 
-// ROUTES
 
 app.get('/', (request, response) => {
-  response.send('Hello from my server');
+  response.send('Hello from lab 10 server');
 });
 
-app.get('/weather', getWeather);
-
-
+app.get('/weather', weatherHandler);
 app.get('/movies', getMovies);
-//   try {
-//     let movieCity = request.query.movie_city;
-
-//     let movieURL = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&language=en-US&include_adult=false&query=${movieCity}`;
-//     let moviesFromAPI = await axios.get(movieURL);
-//     console.log(moviesFromAPI);
-
-//     let movieData = moviesFromAPI.data.results.map(movie => new Movie(movie));
-//     console.log(movieData);
-//     response.send(movieData);
-
-//   } catch (error) {
-//     // next(error);
-//     Promise.resolve().then(() => {
-//       throw new Error(error.message);
-//     }).catch(next);
-//   }
-// });
 
 app.get('*', (request, response) => {
   response.status(404).send('The thing you are looking for doesn\'t exist');
 });
 
-// ERRORS
+function weatherHandler(request, response) {
+  const lat = request.query.latitude;
+  const lon = request.query.longitude;
 
-app.use((error, request, response, next) => {
+  getWeather(lat, lon)
+    .then(summaries => response.send(summaries))
+    .catch((error) => {
+      console.error(error);
+      response.status(200).send('Sorry. Something went wrong!');
+    });
+}
+
+app.use((error, request, response) => {
   console.log(error.message);
   response.status(500).send(error.message);
 });
 
-
-// class Movie {
-//   constructor(movieObject) {
-//     this.title = movieObject.title;
-//     this.overview = movieObject.overview;
-//     this.vote_average = movieObject.vote_average;
-//     this.vote_count = movieObject.vote_count;
-//     this.poster_path = movieObject.poster_path ? "https://image.tmdb.org/t/p/w500" + movieObject.poster_path : '';
-//     this.popularity = movieObject.popularity;
-//     this.release_date = movieObject.release_date;
-//   }
-// }
-
-// LISTEN
-
-app.listen(PORT, () => console.log(`listening on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server up on ${PORT}`));
