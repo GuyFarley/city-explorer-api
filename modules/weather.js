@@ -28,6 +28,7 @@ class Forecast {
   constructor(cityObject) {
     this.description = cityObject.weather.description;
     this.date = cityObject.datetime;
+    this.temp = Math.floor(cityObject.high_temp * 1.8 + 32);
   }
 }
 
