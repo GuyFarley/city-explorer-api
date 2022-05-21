@@ -4,7 +4,7 @@ console.log('lab 10 server');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const weatherHandler = require('./modules/weather');
+const getWeather = require('./modules/weather');
 const getMovies = require('./modules/movies');
 
 const app = express();
@@ -23,7 +23,19 @@ app.get('*', (request, response) => {
   response.status(404).send('The thing you are looking for doesn\'t exist');
 });
 
-app.use((error, request, response, next) => {
+function weatherHandler(request, response) {
+  const lat = request.query.latitude;
+  const lon = request.query.longitude;
+
+  getWeather(lat, lon)
+    .then(summaries => response.send(summaries))
+    .catch((error) => {
+      console.error(error);
+      response.status(200).send('Sorry. Something went wrong!');
+    });
+}
+
+app.use((error, request, response) => {
   console.log(error.message);
   response.status(500).send(error.message);
 });
