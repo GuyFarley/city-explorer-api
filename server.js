@@ -11,14 +11,11 @@ const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 3002;
 
-
 app.get('/', (request, response) => {
   response.send('Hello from lab 10 server');
 });
-
 app.get('/weather', weatherHandler);
 app.get('/movies', getMovies);
-
 app.get('*', (request, response) => {
   response.status(404).send('The thing you are looking for doesn\'t exist');
 });
@@ -26,7 +23,6 @@ app.get('*', (request, response) => {
 function weatherHandler(request, response) {
   const lat = request.query.latitude;
   const lon = request.query.longitude;
-
   getWeather(lat, lon)
     .then(summaries => response.send(summaries))
     .catch((error) => {
