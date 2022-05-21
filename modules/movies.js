@@ -1,25 +1,31 @@
 'use strict';
 
 const axios = require('axios');
+let cache = require('./cache.js');
 
 async function getMovies(request, response, next) {
-
   try {
     let movieCity = request.query.movie_city;
+    let key = movieCity + 'Data';
+
+    if (cache[key] && (Date.now() - cache[key].timestamp < 5000000)) {
+      console.log('You have previously requested this info');
+      response.status(200).send(cache[key].data);
+    } else {
+      console.log('New search request');
+    }
 
     let movieURL = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&language=en-US&include_adult=false&query=${movieCity}`;
     let moviesFromAPI = await axios.get(movieURL);
-    console.log(moviesFromAPI);
-
     let movieData = moviesFromAPI.data.results.map(movie => new Movie(movie));
-    console.log(movieData);
     response.send(movieData);
 
+    cache[key] = {
+      data: movieData,
+      timestamp: Date.now()
+    };
   } catch (error) {
-    // next(error);
-    Promise.resolve().then(() => {
-      throw new Error(error.message);
-    }).catch(next);
+    next(error);
   }
 }
 
@@ -34,7 +40,6 @@ class Movie {
     this.release_date = movieObject.release_date;
   }
 }
-
 
 module.exports = getMovies;
 
